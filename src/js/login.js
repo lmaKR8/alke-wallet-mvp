@@ -1,12 +1,22 @@
-// Credenciales válidas para simulación de inicio de sesión
+/* ==========================================================================================
+  Inicio de sesión:
+  - Lógica para autenticación de usuarios.
+  - Importa funciones de utils.js (mostrarAlerta)
+========================================================================================== */
+
+/* 
+  Credenciales válidas para simulación de inicio de sesión 
+*/
 const CREDENCIALES_VALIDAS = {
   email: "usuario@ejemplo.com",
   password: "12345",
 };
 
-// Función principal se ejecuta cuando el DOM está completamente cargado.
+
+/* 
+  Maneja el envío del formulario de inicio de sesión.
+*/
 $(document).ready(function () {
-  // Maneja el envío del formulario de inicio de sesión
   $("#loginForm").submit(function (event) {
     event.preventDefault();
 
@@ -39,24 +49,3 @@ $(document).ready(function () {
     }
   });
 });
-
-// Función para mostrar alertas dinámicas
-function mostrarAlerta(mensaje, tipo) {
-  const alerta = $("<div></div>")
-    .addClass(`alert alert-${tipo} alert-dismissible fade show`)
-    .attr("role", "alert").html(`
-      <i class="bi bi-${
-        tipo === "success" ? "check-circle-fill" : "exclamation-triangle-fill"
-      } me-2"></i>
-      ${mensaje}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    `);
-
-  // Limpia alertas anteriores y agrega la nueva
-  $("#alert-container").empty().append(alerta);
-
-  // Auto-oculta la alerta después de 2 segundos
-  setTimeout(function () {
-    alerta.alert("close");
-  }, 2000);
-}

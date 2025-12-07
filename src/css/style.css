@@ -348,7 +348,7 @@ html {
 
 
 /* ============================================
-    5. LOGIN PAGE
+    5. LOGIN
    ============================================ */
 .login-card {
     background: var(--white-98);
@@ -378,7 +378,7 @@ html {
 
 
 /* ============================================
-    6. MENU PAGE
+    6. MENU
    ============================================ */
 .navbar-menu {
     background: linear-gradient(135deg, var(--navbar-blue-opacity-98) 0%, var(--navbar-purple-opacity-98) 100%) !important;
@@ -617,22 +617,42 @@ body.landing-page main.min-vh-100 .py-2 {
     font-weight: 700;
     font-size: 1.5rem;
     color: var(--primary-blue) !important;
-    transition: all var(--transition-fast);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
 }
 
 .navbar-brand:hover {
-    transform: scale(1.05);
+    transform: translateY(-2px);
+    color: var(--primary-dark) !important;
 }
 
 .nav-link {
     font-weight: 500;
     color: var(--gray-700) !important;
-    transition: color var(--transition-fast);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     padding: 0.5rem 1rem !important;
+    position: relative;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-blue), var(--primary-dark));
+    transform: translateX(-50%);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .nav-link:hover {
     color: var(--primary-blue) !important;
+    transform: translateY(-2px);
+}
+
+.nav-link:hover::after {
+    width: 80%;
 }
 
 .nav-link.active {
@@ -834,6 +854,46 @@ body.landing-page main.min-vh-100 .py-2 {
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--gray-600);
+}
+
+/* Tarjetas de estadísticas con efecto de fondo elegante */
+.fade-in-delay-1 .menu-card {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-in-delay-1 .menu-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg,
+            rgba(59, 130, 246, 0.03) 0%,
+            rgba(147, 51, 234, 0.03) 100%);
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+.fade-in-delay-1 .menu-card:hover::before {
+    opacity: 1;
+}
+
+.fade-in-delay-1 .menu-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12),
+        0 0 20px rgba(59, 130, 246, 0.08);
+}
+
+.fade-in-delay-1 .menu-card .stat-icon-container {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-in-delay-1 .menu-card:hover .stat-icon-container {
+    transform: scale(1.1) rotate(5deg);
 }
 
 .icon-secundary {

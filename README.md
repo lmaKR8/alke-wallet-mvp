@@ -1,4 +1,16 @@
-# 💳 Alke Wallet - Billetera Digital
+# Alke Wallet - Billetera Digital
+
+## Índice
+- [ Acceso a la Demo ](#demo)
+- [ Credenciales de Acceso ](#credenciales-de-acceso)
+- [ Autor ](#autor)
+- [ Descripción del Proyecto ](#descripción-del-proyecto)
+- [ Tecnologías Utilizadas ](#tecnologías-utilizadas)
+- [ Estructura del Proyecto ](#estructura-del-proyecto)
+- [ Funcionalidades Principales ](#funcionalidades-principales)
+- [ Ramas del Proyecto ](#ramas-del-proyecto)
+
+---
 
 ## Demo
 **Accede a la demo aquí:** https://lmakr8.github.io/alke-wallet/
@@ -15,8 +27,20 @@ Password: 12345
 
 ---
 
+## Autor
+**Desarrollado por**: Leandro Marchant A.
+**Tipo**: Proyecto Educativo  
+**Módulo**: Desarrollo Front-end  
+**Programa**: Fullstack Python - Talento Digital  
+**Año**: 2025
+
+---
+
 ## Descripción del Proyecto
-**Alke Wallet** es una aplicación web de billetera digital desarrollada como proyecto del **Módulo 2** del programa **Fullstack Python - Talento Digital 2025**. Esta solución simula una plataforma fintech completa que permite gestionar finanzas personales con una interfaz moderna, minimalista, responsive y funcional en el lado del cliente.
+**Alke Wallet** es una aplicación web de billetera digital desarrollada como proyecto educativo del programa **Fullstack Python - Talento Digital 2025**. Esta solución simula una plataforma fintech completa que permite gestionar finanzas personales con una interfaz moderna, minimalista, responsive y funcional en el lado del cliente.
+
+### El Desafío
+Construir una e-wallet utilizando HTML5, CSS3, Bootstrap, JavaScript y jQuery. El proyecto requería implementar un sistema de autenticación simulado, gestión de saldo con depósitos y transferencias, CRUD de contactos, historial de transacciones con filtros y paginación, todo almacenado en LocalStorage sin backend real. El énfasis se puso en clean code,responsividad y uso efectivo de control de versiones Git.
 
 ---
 
@@ -60,21 +84,56 @@ alke-wallet/
         ├── menu.js             # Dashboard y navegación
         ├── deposit.js          # Gestión de depósitos
         ├── sendMoney.js        # Transferencias y CRUD de contactos
-        └── transactions.js     # Historial, filtros y paginación
+        ├── transactions.js     # Historial, filtros y paginación
+        └── components/         # Módulos reutilizables
+            ├── utils.js        # Funciones globales (formateo, alertas, storage)
+            ├── filters.js      # Sistema de filtrado
+            └── pagination.js   # Sistema de paginación
 ```
+
+---
+
+## Funcionalidades Principales
+
+### Autenticación
+- Sistema de login con validación de credenciales
+- Mensajes de error personalizados
+- Redirección automática al dashboard
+
+### Gestión de Saldo
+- Visualización del saldo actual en tiempo real
+- Depósitos con actualización instantánea
+- Validación de montos y formularios
+
+### Transferencias
+- Envío de dinero a contactos guardados
+- Validación de saldo disponible antes de transferir
+- Confirmación visual de operaciones exitosas
+
+### Gestión de Contactos
+- CRUD completo: Crear, leer, actualizar y eliminar contactos
+- Búsqueda en tiempo real por nombre o alias
+- Validación de datos bancarios (CBU de 22 dígitos)
+- Almacenamiento persistente en LocalStorage
+
+### Historial de Transacciones
+- Visualización completa de movimientos (depósitos, envíos, recibidos)
+- Filtros por tipo de transacción y período de tiempo
+- Sistema de paginación con 5 elementos por página
+- Estadísticas de ingresos y egresos totales
+- Ordenamiento por fecha (más recientes primero)
 
 ---
 
 ## Ramas del Proyecto
 El proyecto utiliza las siguientes ramas:
 
-| Rama                   | Descripción                                  | Estado      |
-| ---------------------- | -------------------------------------------- | ----------- |
-| `main`                 | Rama principal de producción                 | Activa      |
-| `feature/login`        | Sistema de autenticación y validación        | Mergeada    |
-| `feature/deposits`     | Módulo de depósitos y actualización de saldo | Mergeada    |
-| `feature/transactions` | Historial, filtros y paginación              | Mergeada    |
-
+| Rama                   | Descripción                                  | Estado   |
+| ---------------------- | -------------------------------------------- | -------- |
+| `main`                 | Rama principal de producción                 | Activa   |
+| `feature/login`        | Sistema de autenticación y validación        | Mergeada |
+| `feature/deposits`     | Módulo de depósitos y actualización de saldo | Mergeada |
+| `feature/transactions` | Historial, filtros y paginación              | Mergeada |
 
 ### Convenciones de Commits
 El proyecto sigue las convenciones de commits semánticos:
@@ -86,9 +145,3 @@ El proyecto sigue las convenciones de commits semánticos:
 - `docs:` Actualización de documentación
 
 ---
-
-## Autor
-**Desarrollado por**: Leandro Marchant  
-**Programa**: Fullstack Python - Talento Digital 2025  
-**Módulo**: 2 - Desarrollo Front-end  
-**Año**: 2025

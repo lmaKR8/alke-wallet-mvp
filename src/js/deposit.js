@@ -1,8 +1,18 @@
-// Función principal se ejecuta cuando el DOM está completamente cargado.
+/* ==========================================================================================
+  Depósito de fondos:
+  - Lógica para manejar depósitos en la aplicación.
+  - Utiliza jQuery para la manipulación del DOM y eventos.
+  - Guarda el saldo y el historial de movimientos en localStorage.
+  - Importa funciones de utils.js (formatearPesos, mostrarAlerta, guardarMovimiento)
+========================================================================================== */
+
+/* 
+  Muestra el saldo actual y maneja el formulario de depósito.
+*/
 $(document).ready(function () {
   mostrarSaldoActual();
 
-  // Maneja el envío del formulario de depósito
+  // Envía el formulario de depósito
   $("#depositForm").submit(function (event) {
     event.preventDefault();
 
@@ -18,16 +28,16 @@ $(document).ready(function () {
       return;
     }
 
-    // Obtiene el saldo actual de localStorage o usa valor por defecto
+    // Obtiene el saldo actual de localStorage o usa el valor por defecto
     let saldoActual = parseFloat(localStorage.getItem("saldo"));
     if (isNaN(saldoActual)) {
       saldoActual = 12500;
     }
 
-    // Calcula nuevo saldo redondeado
+    // Calcula el nuevo saldo redondeado
     const nuevoSaldo = Math.round(saldoActual + monto);
 
-    // Guarda nuevo saldo en localStorage
+    // Guarda el nuevo saldo en localStorage
     localStorage.setItem("saldo", nuevoSaldo);
 
     // Guarda el movimiento en el historial
@@ -38,7 +48,7 @@ $(document).ready(function () {
       fecha: new Date().toISOString(),
     });
 
-    // Muestra monto depositado
+    // Muestra el monto depositado
     mostrarLeyendaDeposito(monto);
 
     mostrarAlerta(
@@ -55,62 +65,23 @@ $(document).ready(function () {
   });
 });
 
-// Formatea un número como moneda en pesos chilenos (CLP) con separadores de miles.
-function formatearPesos(monto) {
-  const montoEntero = Math.round(monto);
-  return montoEntero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-}
 
-// Muestra el saldo actual en la interfaz
+/*
+  Muestra el saldo actual en la interfaz.
+*/
 function mostrarSaldoActual() {
   const saldo = parseFloat(localStorage.getItem("saldo")) || 12500;
-
   $("#saldo-actual").text(`$${formatearPesos(saldo)}`);
 }
 
-// Muestra una leyenda con el monto depositado
+
+/*
+  Muestra una leyenda con el monto depositado.
+*/
 function mostrarLeyendaDeposito(monto) {
   const leyenda = $("<div></div>").addClass("alert alert-success mt-3").html(`
       <i class="bi bi-check-circle-fill me-2"></i>
       <strong>Monto depositado:</strong> $${formatearPesos(monto)}
     `);
-
   $("#deposito-info").html(leyenda);
-}
-
-// Muestra una alerta en la parte superior del formulario
-function mostrarAlerta(mensaje, tipo) {
-  const alerta = $("<div></div>")
-    .addClass(`alert alert-${tipo} alert-dismissible fade show`)
-    .attr("role", "alert").html(`
-      <i class="bi bi-${
-        tipo === "success"
-          ? "check-circle-fill"
-          : tipo === "warning"
-          ? "exclamation-triangle-fill"
-          : "info-circle-fill"
-      } me-2"></i>
-      ${mensaje}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    `);
-
-  // Limpia alertas anteriores y agrega la nueva
-  $("#alert-container").html(alerta);
-
-  // Auto-oculta la alerta después de 3 segundos
-  setTimeout(function () {
-    alerta.alert("close");
-  }, 3000);
-}
-
-// Guarda un movimiento en el historial de transacciones en localStorage
-function guardarMovimiento(movimiento) {
-  // Obtiene movimientos existentes desde localStorage o crea array vacío
-  let movimientos = JSON.parse(localStorage.getItem("movimientos")) || [];
-
-  // Agrega el nuevo movimiento al inicio del array
-  movimientos.unshift(movimiento);
-
-  // Guarda en localStorage
-  localStorage.setItem("movimientos", JSON.stringify(movimientos));
 }

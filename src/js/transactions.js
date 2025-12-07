@@ -1,67 +1,67 @@
-// Función principal se ejecuta cuando el DOM está completamente cargado.
+/* ==========================================================================================
+  Historial de transacciones:
+  - Lógica para visualizar movimientos con filtros y paginación.
+  - Importa funciones de utils.js (formatearPesos)
+  - Importa funciones de pagination.js (crearPaginador, setPaginadorDatos, getDatosPaginaActual, generarControlesPaginacion, configurarEventosPaginacion)
+  - Importa funciones de filters.js (aplicarFiltrosMultiples, calcularTotales)
+========================================================================================== */
+
+/*
+  Muestra el historial de movimientos con filtros y paginación.
+*/
+const paginador = crearPaginador(5);
+
 $(document).ready(function () {
   cargarMovimientos();
   agregarEventosFiltros();
-  agregarEventosPaginacion();
+  configurarEventosPaginacion(".pagination", paginador, function () {
+    mostrarMovimientosPaginados();
+    // Scroll suave al inicio de la lista
+    $(".transaction-list").get(0)?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+    });
+  });
 });
 
-// Variable global para la paginación
-let paginaActual = 1;
-const itemsPorPagina = 5;
-let movimientosFiltrados = [];
 
-// Formatea un número como moneda en pesos chilenos (CLP) con separadores de miles.
-function formatearPesos(monto) {
-  const montoEntero = Math.round(monto);
-  return montoEntero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-}
-
-// Agrega eventos a los filtros de tipo y período.
+/* 
+  Agrega eventos a los filtros de tipo y período.
+*/
 function agregarEventosFiltros() {
-  // Evento para filtro de tipo
-  $("#filtroTipo").change(function () {
-    aplicarFiltros();
-  });
-
-  // Evento para filtro de período
-  $("#filtroPeriodo").change(function () {
+  $("#filtroTipo, #filtroPeriodo").change(function () {
     aplicarFiltros();
   });
 }
 
-// Aplica los filtros seleccionados y actualiza la lista de movimientos.
+
+/* 
+  Aplica los filtros seleccionados y actualiza la lista de movimientos.
+*/
 function aplicarFiltros() {
   const tipoSeleccionado = $("#filtroTipo").val();
   const periodoSeleccionado = parseInt($("#filtroPeriodo").val());
 
   // Obtiene movimientos desde localStorage
-  let movimientos = JSON.parse(localStorage.getItem("movimientos")) || [];
+  const movimientos = JSON.parse(localStorage.getItem("movimientos")) || [];
 
-  // Filtra por tipo
-  if (tipoSeleccionado !== "todos") {
-    movimientos = movimientos.filter(function (mov) {
-      return mov.tipo === tipoSeleccionado;
-    });
-  }
-
-  // Filtra por período
-  const fechaLimite = new Date();
-  fechaLimite.setDate(fechaLimite.getDate() - periodoSeleccionado);
-
-  movimientos = movimientos.filter(function (mov) {
-    const fechaMov = new Date(mov.fecha);
-    return fechaMov >= fechaLimite;
+  // Aplica filtros utilizando el módulo filters.js
+  const movimientosFiltrados = aplicarFiltrosMultiples(movimientos, {
+    tipo: tipoSeleccionado,
+    periodo: periodoSeleccionado,
   });
 
-  // Guarda los movimientos filtrados y reinicia la página
-  movimientosFiltrados = movimientos;
-  paginaActual = 1;
+  // Actualiza el paginador con los movimientos filtrados
+  setPaginadorDatos(paginador, movimientosFiltrados);
 
   // Muestra los movimientos filtrados con paginación
   mostrarMovimientosPaginados();
 }
 
-// Carga los movimientos desde localStorage o crea datos hardcodeados si no existen.
+
+/* 
+  Carga los movimientos desde localStorage o datos hardcodeados si no existen.
+*/
 function cargarMovimientos() {
   // Obtiene movimientos desde localStorage o crear movimientos por defecto
   let movimientos = JSON.parse(localStorage.getItem("movimientos"));
@@ -129,17 +129,8 @@ function cargarMovimientos() {
     localStorage.setItem("movimientos", JSON.stringify(movimientos));
   }
 
-  // Calcula totales de ingresos y egresos
-  let totalIngresos = 0;
-  let totalEgresos = 0;
-
-  movimientos.forEach(function (mov) {
-    if (mov.tipo === "deposito" || mov.tipo === "recibido") {
-      totalIngresos += mov.monto;
-    } else if (mov.tipo === "envio") {
-      totalEgresos += mov.monto;
-    }
-  });
+  // Calcula totales de ingresos y egresos usando filters.js
+  const { totalIngresos, totalEgresos } = calcularTotales(movimientos);
 
   // Actualiza tarjetas de ingresos y egresos
   $(".card.text-center")
@@ -151,89 +142,35 @@ function cargarMovimientos() {
     .find("h4")
     .text(`$${formatearPesos(totalEgresos)}`);
 
-  // Guarda movimientos en variable global y muestra con paginación
-  movimientosFiltrados = movimientos;
-  paginaActual = 1;
+  // Configura el paginador y muestra los movimientos
+  setPaginadorDatos(paginador, movimientos);
   mostrarMovimientosPaginados();
 }
 
-// Muestra los movimientos de la página actual con paginación.
+
+/* 
+  Muestra los movimientos de la página actual con paginación.
+*/
 function mostrarMovimientosPaginados() {
-  const totalPaginas = Math.ceil(movimientosFiltrados.length / itemsPorPagina);
-  const inicio = (paginaActual - 1) * itemsPorPagina;
-  const fin = inicio + itemsPorPagina;
-  const movimientosPagina = movimientosFiltrados.slice(inicio, fin);
+  const movimientosPagina = getDatosPaginaActual(paginador);
 
+  // Muestra los movimientos
   mostrarMovimientos(movimientosPagina);
-  actualizarPaginacion(totalPaginas);
-}
 
-// Actualiza los controles de paginación según la página actual y total de páginas.
-function actualizarPaginacion(totalPaginas) {
-  const paginacion = $(".pagination");
-  paginacion.empty();
+  // Actualiza los controles de paginación (solo los items <li>)
+  const htmlPaginacion = generarControlesPaginacion(paginador, true);
+  $(".pagination").html(htmlPaginacion);
+} 
 
-  // Botón Anterior
-  const anteriorDisabled = paginaActual === 1 ? "disabled" : "";
-  paginacion.append(`
-    <li class="page-item ${anteriorDisabled}">
-      <a class="page-link" href="#" data-pagina="${paginaActual - 1}">
-        <i class="bi bi-chevron-left"></i>
-        Anterior
-      </a>
-    </li>
-  `);
 
-  // Páginas numeradas
-  for (let i = 1; i <= totalPaginas; i++) {
-    const activeClass = i === paginaActual ? "active" : "";
-    paginacion.append(`
-      <li class="page-item ${activeClass}">
-        <a class="page-link" href="#" data-pagina="${i}">${i}</a>
-      </li>
-    `);
-  }
-
-  // Botón Siguiente
-  const siguienteDisabled =
-    paginaActual === totalPaginas || totalPaginas === 0 ? "disabled" : "";
-  paginacion.append(`
-    <li class="page-item ${siguienteDisabled}">
-      <a class="page-link" href="#" data-pagina="${paginaActual + 1}">
-        Siguiente
-        <i class="bi bi-chevron-right"></i>
-      </a>
-    </li>
-  `);
-}
-
-// Agrega eventos a los controles de paginación.
-function agregarEventosPaginacion() {
-  $(document).on("click", ".pagination .page-link", function (e) {
-    e.preventDefault();
-    const pagina = parseInt($(this).data("pagina"));
-    const totalPaginas = Math.ceil(
-      movimientosFiltrados.length / itemsPorPagina
-    );
-
-    if (!isNaN(pagina) && pagina >= 1 && pagina <= totalPaginas) {
-      paginaActual = pagina;
-      mostrarMovimientosPaginados();
-
-      // Scroll suave al inicio de la lista
-      $(".transaction-list")
-        .get(0)
-        ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
-  });
-}
-
-// Muestra los movimientos en la lista.
+/*
+  Muestra los movimientos en la lista. 
+*/
 function mostrarMovimientos(movimientos) {
   const listaMovimientos = $("#lista-movimientos");
 
   // Actualiza el badge de cantidad con el total de movimientos filtrados
-  const totalMovimientos = movimientosFiltrados.length;
+  const totalMovimientos = paginador.datos.length;
   if (totalMovimientos === 0) {
     $("#badge-cantidad").text("Sin movimientos");
   } else if (totalMovimientos === 1) {
@@ -270,9 +207,11 @@ function mostrarMovimientos(movimientos) {
   });
 }
 
-// Crea el elemento HTML para un movimiento.
+
+/* 
+  Crea el elemento HTML para un movimiento.
+*/
 function crearElementoMovimiento(movimiento) {
-  // Determina tipo de movimiento
   let icono, colorClass, signo, titulo;
 
   if (movimiento.tipo === "deposito") {
@@ -339,7 +278,10 @@ function crearElementoMovimiento(movimiento) {
   return li;
 }
 
-// Obtiene el nombre legible del tipo de transacción.
+
+/* 
+  Obtiene el nombre del tipo de transacción.
+*/
 function getTipoTransaccion(tipo) {
   switch (tipo) {
     case "deposito":

@@ -1,4 +1,9 @@
-// Función principal se ejecuta cuando el DOM está completamente cargado.
+/* ==========================================================================================
+  index.js:
+  - Lógica para la página de inicio.
+  - Agrega animaciones y maneja la navegación a otras páginas.
+========================================================================================== */
+
 $(document).ready(function () {
   // Botón de ingreso
   $(".btn-primary").on("click", function (e) {

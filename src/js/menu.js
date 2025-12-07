@@ -1,16 +1,21 @@
-// Función principal se ejecuta cuando el DOM está completamente cargado.
+/* ==========================================================================================
+  Menú principal (Dashboard):
+  - Lógica para el dashboard y navegación.
+  - Importa funciones de utils.js (formatearPesos)
+========================================================================================== */
+
+/* 
+  Muestra el saldo actual y maneja la navegación del menú.
+*/
 $(document).ready(function () {
   cargarSaldo();
   agregarEventosBotones();
 });
 
-// Formatea un número como monto en pesos chilenos con separadores de miles.
-function formatearPesos(monto) {
-  const montoEntero = Math.round(monto);
-  return montoEntero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-}
 
-// Carga el saldo desde el almacenamiento local y lo muestra en la interfaz.
+/* 
+  Carga el saldo desde el almacenamiento local y lo muestra en la interfaz.
+*/
 function cargarSaldo() {
   let saldo = parseFloat(localStorage.getItem("saldo"));
 
@@ -24,7 +29,10 @@ function cargarSaldo() {
   $("#saldo").text("$" + formatearPesos(saldo));
 }
 
-// Agrega eventos de clic a los botones del menú para mostrar mensajes de redirección.
+
+/* 
+  Agrega eventos de clic a los botones del menú para mostrar mensajes de redirección.
+*/
 function agregarEventosBotones() {
   // Botón Depositar
   $('a[href="deposit.html"]').on("click", function (event) {
@@ -54,9 +62,12 @@ function agregarEventosBotones() {
   });
 }
 
-// Muestra un mensaje de redirección utilizando un toast de Bootstrap.
+
+/* 
+  Muestra un mensaje de redirección utilizando toast de Bootstrap.
+*/
 function mostrarMensajeRedireccion(nombrePantalla) {
-  // Crea un toast de Bootstrap
+  // Crea un toast
   const toastHtml = `
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
       <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">

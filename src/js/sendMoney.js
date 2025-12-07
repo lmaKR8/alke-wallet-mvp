@@ -1,26 +1,34 @@
-// Función principal se ejecuta cuando el DOM está completamente cargado.
+/* ==========================================================================================
+  Envío de dinero y gestión de contactos:
+  - Lógica para transferencias y CRUD de contactos.
+  - Importa funciones de utils.js (formatearPesos, mostrarAlerta, guardarMovimiento)
+========================================================================================== */
+
+/*
+  Maneja el envío de dinero y la gestión de contactos.
+*/
 $(document).ready(function () {
   mostrarSaldoActual();
-  cargarYMostrarContactos(); // Cargar contactos al iniciar
+  cargarYMostrarContactos();
   agregarEventosBusqueda();
   agregarEventosFormularios();
   agregarEventosContactos();
   agregarEventosEdicion();
 });
 
-// Formatea un número como moneda en pesos chilenos (CLP) con separadores de miles.
-function formatearPesos(monto) {
-  const montoEntero = Math.round(monto);
-  return montoEntero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-}
 
-// Muestra el saldo actual en el elemento correspondiente.
+/* 
+  Muestra el saldo actual en el elemento correspondiente.
+*/
 function mostrarSaldoActual() {
   const saldo = parseFloat(localStorage.getItem("saldo")) || 12500;
   $("#saldo-disponible").text(formatearPesos(saldo));
 }
 
-// Agrega los eventos para el formulario de búsqueda de contactos.
+
+/* 
+  Agrega los eventos para el formulario de búsqueda de contactos.
+*/
 function agregarEventosBusqueda() {
   // Función para filtrar contactos
   function filtrarContactos() {
@@ -56,7 +64,10 @@ function agregarEventosBusqueda() {
   });
 }
 
-// Agrega eventos para los formularios de agregar contacto y enviar dinero.
+
+/* 
+  Agrega eventos para los formularios de agregar contacto y enviar dinero.
+*/
 function agregarEventosFormularios() {
   // Modal para agregar contacto - resetea formulario al abrir
   $("#nuevoContactoModal").on("show.bs.modal", function () {
@@ -206,7 +217,10 @@ function agregarEventosFormularios() {
   });
 }
 
-// Agrega los eventos de edición de contactos
+
+/* 
+  Agrega los eventos de edición de contactos
+*/
 function agregarEventosEdicion() {
   // Modal para editar contacto - resetea formulario al abrir
   $("#editarContactoModal").on("show.bs.modal", function () {
@@ -297,7 +311,10 @@ function agregarEventosEdicion() {
   });
 }
 
-// Agrega los eventos para las tarjetas de contacto.
+
+/*
+  Agrega los eventos para las tarjetas de contacto.
+*/
 function agregarEventosContactos() {
   $(document).on("click", ".btn-enviar-dinero", function () {
     const contacto = $(this).data("contacto");
@@ -334,7 +351,9 @@ function agregarEventosContactos() {
   });
 }
 
-// Muestra un mensaje de confirmación después de enviar dinero.
+/* 
+  Mensaje de confirmación después de enviar dinero..
+*/
 function mostrarMensajeConfirmacion(contacto, monto) {
   const mensaje = $("<div></div>")
     .addClass("alert alert-success alert-dismissible fade show")
@@ -354,31 +373,10 @@ function mostrarMensajeConfirmacion(contacto, monto) {
   }, 3000);
 }
 
-// Muestra una alerta en la parte superior del formulario
-function mostrarAlerta(mensaje, tipo) {
-  const alerta = $("<div></div>")
-    .addClass(`alert alert-${tipo} alert-dismissible fade show`)
-    .attr("role", "alert").html(`
-      <i class="bi bi-${
-        tipo === "success"
-          ? "check-circle-fill"
-          : tipo === "warning"
-          ? "exclamation-triangle-fill"
-          : "x-circle-fill"
-      } me-2"></i>
-      ${mensaje}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    `);
 
-  $("#alert-container").html(alerta);
-
-  // Auto-oculta la alerta después de 3 segundos
-  setTimeout(function () {
-    alerta.alert("close");
-  }, 3000);
-}
-
-// Guarda un contacto en el localStorage.
+/* 
+  Guarda un contacto en el localStorage.
+*/
 function guardarContacto(contacto) {
   // Obtiene lista de contactos existentes o crea array vacío
   let contactos = JSON.parse(localStorage.getItem("contactos")) || [];
@@ -386,7 +384,10 @@ function guardarContacto(contacto) {
   localStorage.setItem("contactos", JSON.stringify(contactos));
 }
 
-// Elimina un contacto del localStorage por su CBU
+
+/* 
+  Elimina un contacto del localStorage por su CBU
+*/
 function eliminarContacto(cbu) {
   let contactos = JSON.parse(localStorage.getItem("contactos")) || [];
   // Filtra el array para eliminar el contacto con el CBU especificado
@@ -394,13 +395,19 @@ function eliminarContacto(cbu) {
   localStorage.setItem("contactos", JSON.stringify(contactos));
 }
 
-// Obtiene un contacto específico por su CBU
+
+/* 
+  Obtiene un contacto específico por su CBU
+*/
 function obtenerContactoPorCBU(cbu) {
   const contactos = JSON.parse(localStorage.getItem("contactos")) || [];
   return contactos.find((contacto) => contacto.cbu === cbu);
 }
 
-// Actualiza un contacto existente en el localStorage
+
+/* 
+  Actualiza un contacto existente en el localStorage
+*/
 function actualizarContacto(cbuOriginal, contactoActualizado) {
   let contactos = JSON.parse(localStorage.getItem("contactos")) || [];
   const index = contactos.findIndex((contacto) => contacto.cbu === cbuOriginal);
@@ -413,7 +420,10 @@ function actualizarContacto(cbuOriginal, contactoActualizado) {
   return false;
 }
 
-// Carga los contactos desde localStorage.
+
+/* 
+  Carga los contactos desde localStorage.
+*/
 function cargarContactos() {
   let contactos = JSON.parse(localStorage.getItem("contactos")) || [];
 
@@ -434,7 +444,10 @@ function cargarContactos() {
   return contactos;
 }
 
-// Carga y muestra todos los contactos en la lista
+
+/* 
+  Carga y muestra todos los contactos en la lista
+*/
 function cargarYMostrarContactos() {
   const contactos = cargarContactos();
   const listaContactos = $("#lista-contactos");
@@ -485,12 +498,4 @@ function cargarYMostrarContactos() {
     `;
     listaContactos.append(contactCard);
   });
-}
-
-// Guarda un movimiento en el historial de transacciones en localStorage
-function guardarMovimiento(movimiento) {
-  // Obtiene movimientos desde localStorage o crea array vacío
-  let movimientos = JSON.parse(localStorage.getItem("movimientos")) || [];
-  movimientos.unshift(movimiento);
-  localStorage.setItem("movimientos", JSON.stringify(movimientos));
 }
