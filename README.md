@@ -28,11 +28,11 @@ Password: 12345
 ---
 
 ## Autor
-**Desarrollado por**: Leandro Marchant A.
+**Desarrollado por**: Leandro Marchant A.  
 **Tipo**: Proyecto Educativo  
 **Módulo**: Desarrollo Front-end  
 **Programa**: Fullstack Python - Talento Digital  
-**Año**: 2025
+**Año**: 2025  
 
 ---
 
