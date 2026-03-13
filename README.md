@@ -13,7 +13,7 @@
 ---
 
 ## Demo
-**Accede a la demo aquí:** https://lmakr8.github.io/alke-wallet/
+**Accede a la demo aquí:** https://lmakr8.github.io/alke-wallet-mvp
 
 ---
 
